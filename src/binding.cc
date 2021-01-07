@@ -1,10 +1,7 @@
-#include "v8.h"
-#include "node.h"
+#include <node.h>
+#include <v8.h>
 #include "node_pointer.h"
 #include "mpg123.h"
-
-using namespace v8;
-using namespace node;
 
 namespace {
 #define CONST_INT(value) \
@@ -14,7 +11,7 @@ namespace {
   NAN_METHOD(node_mpg123_volume) {
     Nan::HandleScope scope;
     mpg123_handle *mh = UnwrapPointer<mpg123_handle *>(info[0]);
-    double vol = info[1]->NumberValue();
+    double vol = info[1]->NumberValue(Nan::GetCurrentContext()).FromJust();
     int ret = mpg123_volume(mh, vol);
     info.GetReturnValue().Set(Nan::New<v8::Integer>(ret));
   }
@@ -33,7 +30,7 @@ namespace {
     }
   }
 
-  void Initialize(Handle<Object> target) {
+  void Initialize(v8::Local<v8::Object> target) {
     Nan::HandleScope scope;
 
     Nan::SetMethod(target, "mpg123_volume", node_mpg123_volume);
